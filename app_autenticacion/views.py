@@ -18,13 +18,13 @@ def autenticacion(request):
             login(request, user)
             return redirect('dashboard')
         else:
-            mensaje = "❌ Credenciales incorrectas. Intenta de nuevo."
+            mensaje = "Credenciales incorrectas. Intenta de nuevo."
     
     return render(request, 'app_auten/autenticacion.html', {'mensaje': mensaje})
 
 
-@never_cache  # Capa 2: No guardar en caché
-@login_required  # Capa 1: Proteger vista
+@never_cache  # No guardar en caché
+@login_required  # Proteger vista
 def dashboard(request):
     return render(request, 'app_auten/dashboard.html', {'usuario': request.user})
 
