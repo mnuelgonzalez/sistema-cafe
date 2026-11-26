@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'pr_cafeteria.middleware.NoCacheMiddleware', 
 ]
 
 ROOT_URLCONF = 'pr_cafeteria.urls'
@@ -145,5 +146,4 @@ JAZZMIN_UI_TWEAKS = {
     "theme": "default",
 }
 
-# URL a la que se redirige si un usuario no autenticado intenta entrar a una vista protegida
-LOGIN_URL = '/autenticacion/'
+LOGIN_URL = '/'  # Ahora redirige a la raíz si no estás autenticado

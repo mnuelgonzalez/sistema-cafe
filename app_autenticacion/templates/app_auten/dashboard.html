@@ -32,16 +32,44 @@
             font-size: 60px;
             color: #6f4e37;
         }
-        .btn-coffee {
+
+        /* --- BOTÓN DE CERRAR SESIÓN (navbar) --- */
+        .btn-logout-nav {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-logout-nav:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        /* BOTÓN DE CERRAR SESIÓN (centro)*/
+        .btn-logout-main {
             background-color: #6f4e37;
             color: white;
             border: none;
-            padding: 10px 30px;
+            padding: 12px 30px;
             border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 600;
+            transition: all 0.2s;
         }
-        .btn-coffee:hover {
+        .btn-logout-main:hover {
             background-color: #5a3e2b;
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(111, 78, 55, 0.4);
         }
     </style>
 </head>
@@ -49,9 +77,9 @@
     <nav class="navbar navbar-expand-lg navbar-cafe">
         <div class="container">
             <span class="navbar-brand"><i class="fas fa-mug-hot"></i> Café & Aroma</span>
-            <div class="ms-auto">
-                <span class="me-3"><i class="fas fa-user"></i> {{ usuario.username }}</span>
-                <a href="{% url 'cerrar_sesion' %}" class="btn btn-light btn-sm">
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <span><i class="fas fa-user"></i> {{ usuario.username }}</span>
+                <a href="{% url 'cerrar_sesion' %}" class="btn-logout-nav">
                     <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                 </a>
             </div>
@@ -65,10 +93,39 @@
             <p class="text-muted">Has iniciado sesión correctamente en el sistema de gestión de Café & Aroma.</p>
             <hr>
             <p>📊 Aquí verás tus reportes de ventas, inventario y pedidos.</p>
-            <a href="{% url 'cerrar_sesion' %}" class="btn btn-coffee mt-3">
-                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            <a href="{% url 'cerrar_sesion' %}" class="btn-logout-main mt-3">
+               Cerrar Sesión
             </a>
         </div>
     </div>
+    <script>
+    // Detectar cuando el usuario presiona "Atrás" y forzar recarga
+    window.addEventListener('pageshow', function(event) {
+        // Si la página viene de bfcache (botón atrás), forzar recarga
+        if (event.persisted) {
+            console.log('🔄 Página cargada desde bfcache - Recargando...');
+            window.location.reload();
+        }
+    });
+    
+    // También verificar al cargar la página
+    window.addEventListener('load', function() {
+        // Hacer una petición al servidor para verificar autenticación
+        fetch('/autenticacion/dashboard/', {
+            method: 'HEAD',
+            credentials: 'same-origin'
+        })
+        .then(response => {
+            // Si el servidor responde con 302 (redirect), no estamos autenticados
+            if (response.redirected) {
+                console.log('🔒 No autenticado - Redirigiendo al login');
+                window.location.href = '/';
+            }
+        })
+        .catch(error => {
+            console.error('Error verificando autenticación:', error);
+        });
+    });
+</script>
 </body>
 </html>

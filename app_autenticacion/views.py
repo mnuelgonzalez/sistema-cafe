@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
 def autenticacion(request):
     mensaje = ""
@@ -14,22 +15,21 @@ def autenticacion(request):
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
-            # PASO CLAVE: iniciar sesión real en Django
             login(request, user)
-            # PASO CLAVE: redirigir al dashboard
             return redirect('dashboard')
         else:
-            mensaje = "Credenciales incorrectas. Intenta de nuevo."
+            mensaje = "❌ Credenciales incorrectas. Intenta de nuevo."
     
     return render(request, 'app_auten/autenticacion.html', {'mensaje': mensaje})
 
 
-# Vista protegida: solo usuarios autenticados pueden entrar
-@login_required
+@never_cache  # Capa 2: No guardar en caché
+@login_required  # Capa 1: Proteger vista
 def dashboard(request):
     return render(request, 'app_auten/dashboard.html', {'usuario': request.user})
 
 
+@never_cache
 def cerrar_sesion(request):
     logout(request)
     return redirect('autenticacion')
